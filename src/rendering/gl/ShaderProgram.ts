@@ -1,4 +1,4 @@
-import {vec4, mat4} from 'gl-matrix';
+import {vec2, vec4, mat4} from 'gl-matrix';
 import Drawable from './Drawable';
 import {gl} from '../../globals';
 
@@ -25,6 +25,10 @@ class ShaderProgram {
 
   unifView: WebGLUniformLocation;
 
+  unifResolution: WebGLUniformLocation;
+
+  unifTime: WebGLUniformLocation;
+
   constructor(shaders: Array<Shader>) {
     this.prog = gl.createProgram();
 
@@ -41,12 +45,28 @@ class ShaderProgram {
 
     // TODO: add other attributes here
     this.unifView   = gl.getUniformLocation(this.prog, "u_View");
+    this.unifResolution = gl.getUniformLocation(this.prog, "u_Resolution");
+    this.unifTime       = gl.getUniformLocation(this.prog, "u_Time");
   }
 
   use() {
     if (activeProgram !== this.prog) {
       gl.useProgram(this.prog);
       activeProgram = this.prog;
+    }
+  }
+
+  setResolution(resolution: vec2) {
+    this.use();
+    if (this.unifResolution !== -1) {
+      gl.uniform2fv(this.unifResolution, resolution);
+    }
+  }
+
+  setTime(t : number) {
+    this.use();
+    if(this.unifTime !== -1) {
+      gl.uniform1f(this.unifTime, t);
     }
   }
 
